@@ -1,9 +1,9 @@
 from setuptools import setup, find_packages
-import src
+import es_sync
 
 setup(
     name='py-mysql-elasticsearch-sync',
-    version=src.__version__,
+    version=es_sync.__version__,
     packages=find_packages(),
     url='https://github.com/zhongbiaodev/py-mysql-elasticsearch-sync',
     license='MIT',
@@ -11,15 +11,16 @@ setup(
     author_email='windfarer@gmail.com',
     description='MySQL to Elasticsearch sync tool',
     install_requires=[
-        'mysql-replication>=0.8',
-        'requests>=2.9.1',
-        'PyYAML>=3.11',
-        'lxml>=3.5.0',
-        'future>=0.15.2'
+        'PyMySQL==0.6.7',
+        'mysql-replication==0.8',
+        'requests==2.9.1',
+        'PyYAML==3.11',
+        'lxml==3.5.0',
+        'future==0.15.2'
     ],
     entry_points={
         'console_scripts': [
-            'es-sync=src:start',
+            'es-sync=es_sync:start',
         ]
     },
     include_package_data=True

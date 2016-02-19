@@ -1,6 +1,7 @@
 from __future__ import print_function, unicode_literals
 from future.builtins import str, range
 import sys
+
 PY2 = sys.version_info[0] == 2
 
 if PY2:
@@ -8,6 +9,8 @@ if PY2:
     DEVNULL = open(os.devnull, 'wb')
 else:
     from subprocess import DEVNULL
+
+
 def encode_in_py2(s):
     if PY2:
         return s.encode('utf-8')
@@ -27,7 +30,7 @@ from functools import reduce
 from pymysqlreplication import BinLogStreamReader
 from pymysqlreplication.row_event import DeleteRowsEvent, UpdateRowsEvent, WriteRowsEvent
 
-__version__ = '0.3.3.1'
+__version__ = '0.3.3.2'
 
 
 # The magic spell for removing invalid characters in xml stream.
@@ -214,7 +217,8 @@ class ElasticSync(object):
                     try:
                         item['doc'][field] = serializer(item['doc'][field])
                     except ValueError as e:
-                        self.logger.error("Error occurred during format, ErrorMessage:{msg}, ErrorItem:{item}".format(
+                        self.logger.error(
+                            "Error occurred during format, ErrorMessage:{msg}, ErrorItem:{item}".format(
                             msg=str(e),
                             item=str(item)))
                         item['doc'][field] = None
@@ -310,7 +314,8 @@ class ElasticSync(object):
                 if tag_stack == path_parts:
                     yield elem
                     elem_stack[-2].remove(elem)
-                if tag_stack == ['database', 'table_structure']:  # dirty hack for getting the tables structure
+                if tag_stack == ['database', 'table_structure']:
+                # dirty hack for getting the tables structure
                     self._parse_table_structure(elem)
                     elem_stack[-2].remove(elem)
                 try:
@@ -321,7 +326,8 @@ class ElasticSync(object):
 
     def _xml_parser(self, f_obj):
         """
-        parse mysqldump XML streaming, convert every item to dict object. 'database/table_data/row'
+        parse mysqldump XML streaming, convert every item to dict object.
+        'database/table_data/row'
         """
         for row in self._parse_and_remove(f_obj, 'database/table_data/row'):
             doc = {}
@@ -338,7 +344,10 @@ class ElasticSync(object):
                     file=self.log_file,
                     pos=self.log_pos)
                 )
-                yaml.safe_dump({"log_file": self.log_file, "log_pos": self.log_pos}, f, default_flow_style=False)
+                yaml.safe_dump({"log_file": self.log_file,
+                                "log_pos": self.log_pos},
+                               f,
+                               default_flow_style=False)
 
     def _xml_dump_loader(self):
         mysqldump = subprocess.Popen(
@@ -406,7 +415,9 @@ class ElasticSync(object):
 
     def _sync_from_binlog(self):
         logging.info("Start to sync binlog")
-        docs = reduce(lambda x, y: y(x), [self._mapper, self._processor], self._binlog_loader())
+        docs = reduce(lambda x, y: y(x), [self._mapper,
+                                          self._processor],
+                      self._binlog_loader())
         self._updater(docs)
 
     def run(self):
